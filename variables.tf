@@ -71,4 +71,9 @@ variable "key_name" {
 variable "eks_admin_arns" {
   description = "List of IAM ARNs that can assume the EKS admin role"
   type        = list(string)
+}
+
+variable "eks_readonly_arns" {
+  description = "List of IAM ARNs that can assume the EKS read-only role"
+  type        = list(string)
 } 
