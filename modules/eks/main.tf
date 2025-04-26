@@ -140,4 +140,75 @@ data "aws_ami" "eks_worker" {
     name   = "name"
     values = ["amazon-eks-node-${var.eks_version}-*"]
   }
+}
+
+resource "aws_iam_role" "eks_admin" {
+  name = "${var.project_name}-eks-admin-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          AWS = var.eks_admin_arns
+        }
+      }
+    ]
+  })
+
+  tags = {
+    Name = "${var.project_name}-eks-admin-role"
+  }
+}
+
+resource "aws_iam_role_policy_attachment" "eks_admin_policy" {
+  role       = aws_iam_role.eks_admin.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
+}
+
+resource "aws_iam_role_policy_attachment" "eks_admin_worker_policy" {
+  role       = aws_iam_role.eks_admin.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
+}
+
+resource "aws_iam_role_policy_attachment" "eks_admin_cni_policy" {
+  role       = aws_iam_role.eks_admin.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
+}
+
+resource "aws_iam_role_policy_attachment" "eks_admin_ecr_policy" {
+  role       = aws_iam_role.eks_admin.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+}
+
+resource "aws_iam_role_policy_attachment" "eks_admin_ssm_policy" {
+  role       = aws_iam_role.eks_admin.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+}
+
+resource "aws_iam_role_policy" "eks_admin_custom" {
+  name = "${var.project_name}-eks-admin-custom-policy"
+  role = aws_iam_role.eks_admin.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "eks:DescribeCluster",
+          "eks:ListClusters",
+          "eks:AccessKubernetesApi",
+          "eks:DescribeNodegroup",
+          "eks:ListNodegroups",
+          "eks:UpdateClusterConfig",
+          "eks:UpdateNodegroupConfig",
+          "eks:UpdateNodegroupVersion"
+        ]
+        Resource = "*"
+      }
+    ]
+  })
 } 

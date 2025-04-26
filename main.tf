@@ -30,4 +30,5 @@ module "eks" {
   eks_version        = var.eks_version
   node_instance_types = var.node_instance_types
   key_name           = var.key_name
+  eks_admin_arns     = var.eks_admin_arns
 } 

@@ -66,4 +66,9 @@ variable "node_instance_types" {
 variable "key_name" {
   description = "Name of the EC2 key pair"
   type        = string
+}
+
+variable "eks_admin_arns" {
+  description = "List of IAM ARNs that can assume the EKS admin role"
+  type        = list(string)
 } 
