@@ -1,0 +1,9 @@
+apiVersion: v2
+name: atlantis
+description: A Helm chart for deploying atlantis
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+maintainers:
+  - name: sojha1991
+    email: sojha1991@gmail.com
